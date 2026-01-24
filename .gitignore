@@ -1,0 +1,15 @@
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/resources/*.yml
+
+# IDE files
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# System files
+.DS_Store
+Thumbs.db

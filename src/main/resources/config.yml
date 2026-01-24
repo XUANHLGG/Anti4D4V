@@ -1,0 +1,23 @@
+# Anti4D4V 配置文件
+
+# 名字前缀黑名单
+banned-name-prefixes:
+  - "4D4V_"
+
+# 名字正则表达式黑名单
+banned-name-regex: [ ]
+
+# 聊天正则表达式黑名单
+banned-chat-regex:
+  - ".*4d4v\\.top.*"
+
+# 命中后的执行动作: BAN_IP, BAN, KICK
+action: BAN_IP
+
+# 是否全服广播拦截消息
+broadcast: true
+
+# 拦截提示消息
+messages:
+  kick-reason: "您的账号或行为触发了安全防护机制。"
+  broadcast-msg: "§f玩家 %player% 因触发黑名单规则被拦截。"

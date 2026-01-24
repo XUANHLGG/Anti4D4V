@@ -1,0 +1,12 @@
+name: Anti4D4V
+version: ${version}
+main: com.tendoarisu.anti4D4V.Anti4D4V
+api-version: '1.20'
+description: 防止特定前缀或ID的玩家进入服务器或进入后刷屏
+authors: [ TendoArisu ]
+
+commands:
+  anti4d4v:
+    description: 主命令
+    permission: anti4d4v.admin
+    usage: /anti4d4v reload
