@@ -54,7 +54,7 @@ public class PlayerListener implements Listener {
             if (pattern.matcher(message).find()) {
                 event.setCancelled(true);
                 // 异步聊天事件中执行封禁需要回到主线程
-                Bukkit.getScheduler().runTask(plugin, () -> {
+                FoliaScheduler.getScheduler().runTask(() -> {
                     executeAction(player.getName(), player.getAddress().getAddress(), player);
                 });
                 return;
@@ -66,7 +66,7 @@ public class PlayerListener implements Listener {
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, Component.text(plugin.getConfigManager().getKickReason()));
         
         // 异步登录事件中执行封禁动作
-        Bukkit.getScheduler().runTask(plugin, () -> {
+        FoliaScheduler.getScheduler().runTask(() -> {
             executeAction(name, address, null);
         });
     }

@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("com.gradleup.shadow") version "9.3.1"
 }
 
 group = 'com.tendoarisu'
@@ -12,10 +13,14 @@ repositories {
         name = "papermc"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
+    maven {
+        url = 'https://jitpack.io'
+    }
 }
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    implementation("com.github.Anon8281:UniversalScheduler:0.1.7")
 }
 
 tasks {
@@ -52,4 +57,8 @@ processResources {
     filesMatching('plugin.yml') {
         expand props
     }
+}
+
+tasks.named("build") {
+    dependsOn(tasks.named("shadowJar"))
 }
