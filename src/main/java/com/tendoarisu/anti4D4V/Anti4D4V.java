@@ -19,7 +19,8 @@ public class Anti4D4V extends JavaPlugin implements CommandExecutor, TabComplete
     @Override
     public void onEnable() {
         this.configManager = new ConfigManager(this);
-        
+        FoliaScheduler.init(this);
+
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         
         getCommand("anti4d4v").setExecutor(this);
