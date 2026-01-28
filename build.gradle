@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.tendoarisu'
-version = '1.1'
+version = '1.2'
 
 repositories {
     mavenCentral()
@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
+    compileOnly("io.netty:netty-all:4.1.97.Final")
     implementation("com.github.Anon8281:UniversalScheduler:0.1.7")
 }
 
