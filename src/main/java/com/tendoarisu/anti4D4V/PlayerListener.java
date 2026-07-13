@@ -34,6 +34,11 @@ public class PlayerListener implements Listener {
         String name = event.getName();
         ConfigManager config = plugin.getConfigManager();
 
+        // 检查是否有豁免权限（通过UUID检查）
+        if (plugin.hasExemptPermission(event.getUniqueId())) {
+            return;
+        }
+
         // 检查前缀
         for (String prefix : config.getBannedPrefixes()) {
             if (name.toLowerCase().startsWith(prefix.toLowerCase())) {
@@ -58,6 +63,12 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
             return;
         }
+
+        // 检查是否有豁免权限
+        if (player.hasPermission("anti4d4v.exempt")) {
+            return;
+        }
+
         String message = event.getMessage();
         ConfigManager config = plugin.getConfigManager();
 

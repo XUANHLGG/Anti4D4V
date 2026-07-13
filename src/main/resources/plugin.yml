@@ -5,9 +5,18 @@ api-version: '1.20'
 folia-supported: true
 description: 防止特定前缀或ID的玩家进入服务器或进入后刷屏
 authors: [ TendoArisu ]
+softdepend: [ LuckPerms ]
 
 commands:
   anti4d4v:
     description: 主命令
     permission: anti4d4v.admin
-    usage: /anti4d4v reload
+    usage: /anti4d4v <reload|blacklist|action>
+
+permissions:
+  anti4d4v.admin:
+    description: 管理员权限
+    default: op
+  anti4d4v.exempt:
+    description: 免疫Anti4D4V的封禁和踢出
+    default: false
