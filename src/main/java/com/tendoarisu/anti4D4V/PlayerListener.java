@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.util.regex.Pattern;
 
 public class PlayerListener implements Listener {
+    private static final String NOTIFY_PERMISSION = "anti4d4v.notify";
     private final Anti4D4V plugin;
 
     public PlayerListener(Anti4D4V plugin) {
@@ -33,6 +34,11 @@ public class PlayerListener implements Listener {
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
         String name = event.getName();
         ConfigManager config = plugin.getConfigManager();
+
+        if (config.isIpBanned(event.getAddress())) {
+            handleIpRangeViolation(event, name, event.getAddress());
+            return;
+        }
 
         // 检查前缀
         for (String prefix : config.getBannedPrefixes()) {
@@ -123,6 +129,14 @@ public class PlayerListener implements Listener {
         plugin.getPacketLossManager().uninjectPlayer(event.getPlayer());
     }
 
+    private void handleIpRangeViolation(AsyncPlayerPreLoginEvent event, String name, InetAddress address) {
+        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, Component.text(plugin.getConfigManager().getKickReason()));
+
+        FoliaScheduler.getScheduler().runTask(() -> {
+            executeIpRangeBan(name, address, null);
+        });
+    }
+
     private void handleViolation(AsyncPlayerPreLoginEvent event, String name, InetAddress address) {
         event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, Component.text(plugin.getConfigManager().getKickReason()));
         
@@ -130,6 +144,24 @@ public class PlayerListener implements Listener {
         FoliaScheduler.getScheduler().runTask(() -> {
             executeAction(name, address, null);
         });
+    }
+
+    private void executeIpRangeBan(String name, InetAddress address, Player player) {
+        ConfigManager config = plugin.getConfigManager();
+        Component kickReason = Component.text(config.getKickReason());
+
+        if (address != null) {
+            Bukkit.banIP(address.getHostAddress());
+        }
+        Bukkit.getBanList(BanList.Type.NAME).addBan(name, config.getKickReason(), null, "Anti4D4V");
+        if (player != null && player.isOnline()) {
+            player.kick(kickReason);
+        }
+
+        if (config.isBroadcast()) {
+            String msg = config.getBroadcastMsg().replace("%player%", name);
+            sendInterceptNotification(msg);
+        }
     }
 
     private void executeAction(String name, InetAddress address, Player player) {
@@ -163,7 +195,16 @@ public class PlayerListener implements Listener {
 
         if (config.isBroadcast()) {
             String msg = config.getBroadcastMsg().replace("%player%", name);
-            Bukkit.broadcast(Component.text(msg));
+            sendInterceptNotification(msg);
+        }
+    }
+
+    private void sendInterceptNotification(String msg) {
+        Component message = Component.text(msg);
+        for (Player onlinePlayer : Bukkit.getOnlinePlayers()) {
+            if (onlinePlayer.hasPermission(NOTIFY_PERMISSION)) {
+                onlinePlayer.sendMessage(message);
+            }
         }
     }
 }

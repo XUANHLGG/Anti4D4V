@@ -19,16 +19,39 @@ public class PacketLossManager {
 
     public PacketLossManager(Anti4D4V plugin) {
         this.plugin = plugin;
+        loadFromConfig();
     }
 
-    public void addPlayer(Player player) {
-        UUID uuid = player.getUniqueId();
+    private void loadFromConfig() {
+        java.util.List<String> uuids = plugin.getConfig().getStringList("packet-loss-players");
+        for (String s : uuids) {
+            try {
+                packetLossPlayers.add(UUID.fromString(s));
+            } catch (IllegalArgumentException ignored) {}
+        }
+    }
+
+    private void saveToConfig() {
+        java.util.List<String> uuids = new java.util.ArrayList<>();
+        for (UUID uuid : packetLossPlayers) {
+            uuids.add(uuid.toString());
+        }
+        plugin.getConfig().set("packet-loss-players", uuids);
+        plugin.saveConfig();
+    }
+
+    public void addPlayer(UUID uuid) {
         packetLossPlayers.add(uuid);
-        injectPlayer(player);
+        saveToConfig();
+        Player onlinePlayer = org.bukkit.Bukkit.getPlayer(uuid);
+        if (onlinePlayer != null) {
+            injectPlayer(onlinePlayer);
+        }
     }
 
     public void removePlayer(UUID uuid) {
         packetLossPlayers.remove(uuid);
+        saveToConfig();
         Player player = org.bukkit.Bukkit.getPlayer(uuid);
         if (player != null) {
             uninjectPlayer(player);

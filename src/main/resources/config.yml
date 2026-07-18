@@ -11,6 +11,10 @@ banned-name-regex: [ ]
 banned-chat-regex:
   - ".*4d4v\\.top.*"
 
+# IP 段黑名单，支持 x 通配符和 CIDR
+# 示例: "113.135.x.x"、"36.4x.x.x"、"1.2.3.x"、"113.135.0.0/16"
+banned-ip-ranges: [ ]
+
 # 命中后的执行动作: BAN_IP, BAN, KICK
 action: BAN_IP
 
