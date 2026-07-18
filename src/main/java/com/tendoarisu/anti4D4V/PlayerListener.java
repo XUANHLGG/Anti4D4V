@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.net.InetAddress;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class PlayerListener implements Listener {
@@ -34,6 +35,11 @@ public class PlayerListener implements Listener {
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
         String name = event.getName();
         ConfigManager config = plugin.getConfigManager();
+
+        // 检查是否有豁免权限（通过UUID检查）
+        if (plugin.hasExemptPermission(event.getUniqueId())) {
+            return;
+        }
 
         if (config.isIpBanned(event.getAddress())) {
             handleIpRangeViolation(event, name, event.getAddress());
@@ -64,6 +70,12 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
             return;
         }
+
+        // 检查是否有豁免权限
+        if (player.hasPermission("anti4d4v.exempt")) {
+            return;
+        }
+
         String message = event.getMessage();
         ConfigManager config = plugin.getConfigManager();
 
@@ -166,31 +178,22 @@ public class PlayerListener implements Listener {
 
     private void executeAction(String name, InetAddress address, Player player) {
         ConfigManager config = plugin.getConfigManager();
-        String action = config.getAction();
+        List<String> actions = config.getActions();
         Component kickReason = Component.text(config.getKickReason());
 
-        switch (action) {
-            case "BAN_IP":
-                if (address != null) {
-                    Bukkit.banIP(address.getHostAddress());
-                }
-                Bukkit.getBanList(BanList.Type.NAME).addBan(name, config.getKickReason(), null, "Anti4D4V");
-                if (player != null && player.isOnline()) {
-                    player.kick(kickReason);
-                }
-                break;
-            case "BAN":
-                Bukkit.getBanList(BanList.Type.NAME).addBan(name, config.getKickReason(), null, "Anti4D4V");
-                if (player != null && player.isOnline()) {
-                    player.kick(kickReason);
-                }
-                break;
-            case "KICK":
-            default:
-                if (player != null && player.isOnline()) {
-                    player.kick(kickReason);
-                }
-                break;
+        if (actions.contains("BAN_IP")) {
+            if (address != null) {
+                Bukkit.banIP(address.getHostAddress());
+            }
+            Bukkit.getBanList(BanList.Type.NAME).addBan(name, config.getKickReason(), null, "Anti4D4V");
+        } else if (actions.contains("BAN")) {
+            Bukkit.getBanList(BanList.Type.NAME).addBan(name, config.getKickReason(), null, "Anti4D4V");
+        }
+
+        if (actions.contains("BAN_IP") || actions.contains("BAN") || actions.contains("KICK")) {
+            if (player != null && player.isOnline()) {
+                player.kick(kickReason);
+            }
         }
 
         if (config.isBroadcast()) {

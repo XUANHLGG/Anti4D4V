@@ -15,7 +15,7 @@ banned-chat-regex:
 # 示例: "113.135.x.x"、"36.4x.x.x"、"1.2.3.x"、"113.135.0.0/16"
 banned-ip-ranges: [ ]
 
-# 命中后的执行动作: BAN_IP, BAN, KICK
+# 命中后的执行动作，支持单个值、逗号分隔或 YAML 列表，例如 BAN,BAN_IP
 action: BAN_IP
 
 # 是否全服广播拦截消息
