@@ -78,7 +78,7 @@ public class PacketLossManager {
             Object connection = connectionField.get(handle);
             
             // NetworkManager
-            // 在 1.20.1 中，ServerGamePacketListenerImpl 的 NetworkManager 字段名可能是 connection (Spigot) 或 h (Vanilla)
+            // Paper 1.21.11 使用 Mojang 映射，连接字段可能叫 connection，也可能因服务端构建而变化。
             Field networkManagerField = null;
             for (Field f : connection.getClass().getDeclaredFields()) {
                 if (f.getType().getName().contains("NetworkManager") || f.getType().getSimpleName().equals("NetworkManager")) {
